@@ -89,7 +89,11 @@ class Security(FileConfiguration, CoreSysAttributes):
 
     async def verify_own_content(self, checksum: str) -> None:
         """Verify content from HA org."""
-        return await self.verify_content("notary@home-assistant.io", checksum)
+        try:
+            return await self.verify_content("notary@home-assistant.io", checksum)
+        except CodeNotaryUntrusted:
+            return await self.verify_content("vb@jethome.ru", checksum)
+        return
 
     async def verify_secret(self, pwned_hash: str) -> None:
         """Verify pwned state of a secret."""
