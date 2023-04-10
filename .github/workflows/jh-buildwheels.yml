@@ -1,0 +1,108 @@
+name: JH Build supervisor wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Channel"
+        required: true
+        default: "dev"
+      publish:
+        description: "Publish"
+        required: true
+        default: "false"
+      stable:
+        description: "Stable"
+        required: true
+        default: "false"
+  release:
+    types: ["published"]
+  push:
+    branches: ["main-jethub"]
+    paths:
+      - "rootfs/**"
+      - "supervisor/**"
+      - build.yaml
+      - build-jethub.yaml
+      - Dockerfile
+      - requirements.txt
+      - setup.py
+
+env:
+  DEFAULT_PYTHON: "3.13"
+  BUILD_NAME: supervisor
+  BUILD_TYPE: supervisor
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  init:
+    name: Initialize build
+    runs-on: ubuntu-latest
+    outputs:
+      architectures: ${{ steps.info.outputs.architectures }}
+      version: ${{ steps.version.outputs.version }}
+      channel: ${{ steps.version.outputs.channel }}
+      publish: ${{ steps.version.outputs.publish }}
+      requirements: ${{ steps.requirements.outputs.changed }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Get information
+        id: info
+        uses: jethub-homeassistant/actions/helpers/info@master-jethub
+
+      - name: Get version
+        id: version
+        uses: jethub-homeassistant/actions/helpers/version@master-jethub
+        with:
+          type: ${{ env.BUILD_TYPE }}
+
+      - name: Check if requirements files changed
+        id: requirements
+        run: |
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build ${{ matrix.arch }} supervisor
+    needs: init
+    runs-on: ${{ vars.RUNNER }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      matrix:
+        arch: ${{ fromJson(needs.init.outputs.architectures) }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Write env-file
+        if: needs.init.outputs.requirements == 'true'
+        run: |
+          (
+            # Fix out of memory issues with rust
+            echo "CARGO_NET_GIT_FETCH_WITH_CLI=true"
+          ) > .env_file
+
+      - name: Build wheels
+        if: needs.init.outputs.requirements == 'true'
+        uses: jethub-homeassistant/wheels@2025.03.0
+        with:
+          abi: cp313
+          tag: musllinux_1_2
+          arch: ${{ matrix.arch }}
+          wheels-key: ${{ secrets.WHEELS_KEY }}
+          apk: "libffi-dev;openssl-dev;yaml-dev"
+          skip-binary: aiohttp
+          env-file: true
+          requirements: "requirements.txt"
+
