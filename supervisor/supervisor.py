@@ -296,7 +296,7 @@ class Supervisor(CoreSysAttributes):
         timeout = aiohttp.ClientTimeout(total=10)
         try:
             await self.sys_websession.head(
-                "https://checkonline.home-assistant.io/online.txt", timeout=timeout
+                "https://haversion.jethome.ru/online.txt", timeout=timeout
             )
         except (ClientError, TimeoutError) as err:
             _LOGGER.debug("Supervisor Connectivity check failed: %s", err)
