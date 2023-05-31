@@ -22,12 +22,12 @@ on:
     types: ["published"]
 
 env:
-  DEFAULT_PYTHON: "3.10"
+  DEFAULT_PYTHON: "3.11"
   BUILD_NAME: supervisor
   BUILD_TYPE: supervisor
 
 concurrency:
-  group: '${{ github.workflow }}-${{ github.ref }}'
+  group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
@@ -42,17 +42,17 @@ jobs:
       requirements: ${{ steps.requirements.outputs.changed }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
 
       - name: Get information
         id: info
-        uses: jethubjhaos/actions/helpers/info@master-jethub
+        uses: jethub-homeassistant/actions/helpers/info@master-jethub
 
       - name: Get version
         id: version
-        uses: jethubjhaos/actions/helpers/version@master-jethub
+        uses: jethub-homeassistant/actions/helpers/version@master-jethub
         with:
           type: ${{ env.BUILD_TYPE }}
 
@@ -75,7 +75,7 @@ jobs:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
 
@@ -89,9 +89,9 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethubjhaos/wheels@2022.10.1
+        uses: jethub-homeassistant/wheels@2022.10.1
         with:
-          abi: cp310
+          abi: cp311
           tag: musllinux_1_2
           arch: ${{ matrix.arch }}
           wheels-key: ${{ secrets.WHEELS_KEY }}
@@ -107,19 +107,19 @@ jobs:
     steps:
       - name: Checkout the repository
         if: needs.init.outputs.publish == 'true'
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v4.5.0
+        uses: actions/setup-python@v4.6.1
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
       - name: Set version
         if: needs.init.outputs.publish == 'true'
-        uses: jethubjhaos/actions/helpers/version@master-jethub
+        uses: jethub-homeassistant/actions/helpers/version@master-jethub
         with:
           type: ${{ env.BUILD_TYPE }}
 
@@ -133,7 +133,7 @@ jobs:
 
       - name: Signing Source
         if: needs.init.outputs.publish == 'true'
-        uses: jethubjhaos/actions/helpers/codenotary@master-jethub
+        uses: jethub-homeassistant/actions/helpers/codenotary@master-jethub
         with:
           source: hash://${{ steps.dirhash.outputs.dirhash }}
           asset: supervisor-${{ needs.init.outputs.version }}
