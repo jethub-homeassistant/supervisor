@@ -168,7 +168,7 @@ jobs:
         run: echo "BUILD_ARGS=--test" >> $GITHUB_ENV
 
       - name: Build supervisor
-        uses: jethub-homeassistant/builder@2023.06.1
+        uses: jethub-homeassistant/builder@2023.06.1b
         with:
           args: |
             $BUILD_ARGS \
@@ -221,7 +221,7 @@ jobs:
 
       - name: Build the Supervisor
         if: needs.init.outputs.publish != 'true'
-        uses: jethub-homeassistant/builder@2023.06.1
+        uses: jethub-homeassistant/builder@2023.06.1b
         with:
           args: |
             --test \
