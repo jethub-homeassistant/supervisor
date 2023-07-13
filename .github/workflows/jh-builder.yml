@@ -154,7 +154,7 @@ jobs:
         if: needs.init.outputs.publish == 'true'
         run: |
           cosign sign-blob --yes rootfs/supervisor.sha256 --bundle rootfs/supervisor.sha256.sig
-  
+
       - name: Login to GitHub Container Registry
         if: needs.init.outputs.publish == 'true'
         uses: docker/login-action@v2.2.0
@@ -212,6 +212,7 @@ jobs:
     name: Run the Supervisor
     needs: ["build", "init"]
     timeout-minutes: 60
+
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.5.3
@@ -233,7 +234,7 @@ jobs:
         if: needs.init.outputs.publish == 'true'
         run: |
           docker pull ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }}
-          docker tag ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }} jethub-homeassistant/amd64-hassio-supervisor:runner
+          docker tag ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }} ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:runner
 
       - name: Create the Supervisor
         run: |
