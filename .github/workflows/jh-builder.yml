@@ -133,7 +133,7 @@ jobs:
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v4.6.1
+        uses: actions/setup-python@v4.7.0
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
   
@@ -174,6 +174,7 @@ jobs:
             $BUILD_ARGS \
             --${{ matrix.arch }} \
             --target /data \
+            --cosign \
             --generic ${{ needs.init.outputs.version }}
         env:
           CAS_API_KEY: ${{ secrets.CAS_TOKEN }}
@@ -233,7 +234,7 @@ jobs:
         if: needs.init.outputs.publish == 'true'
         run: |
           docker pull ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }}
-          docker tag ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }} jethub-homeassistant/amd64-hassio-supervisor:runner
+          docker tag ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:${{ needs.init.outputs.version }} ghcr.io/jethub-homeassistant/amd64-hassio-supervisor:runner
 
       - name: Create the Supervisor
         run: |
