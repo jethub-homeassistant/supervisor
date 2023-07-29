@@ -46,7 +46,7 @@ concurrency:
 jobs:
   init:
     name: Initialize build
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     outputs:
       architectures: ${{ steps.info.outputs.architectures }}
       version: ${{ steps.version.outputs.version }}
@@ -87,7 +87,7 @@ jobs:
   build:
     name: Build ${{ matrix.arch }} supervisor
     needs: init
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     permissions:
       contents: read
       id-token: write
@@ -168,7 +168,7 @@ jobs:
         run: echo "BUILD_ARGS=--test" >> $GITHUB_ENV
 
       - name: Build supervisor
-        uses: jethub-homeassistant/builder@2023.06.1
+        uses: jethub-homeassistant/builder@2023.06.1b
         with:
           args: |
             $BUILD_ARGS \
@@ -182,7 +182,7 @@ jobs:
   version:
     name: Update version
     needs: ["init", "run_supervisor"]
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     steps:
       - name: Checkout the repository
         if: needs.init.outputs.publish == 'true'
@@ -209,7 +209,7 @@ jobs:
           channel: ${{ needs.init.outputs.channel }}
 
   run_supervisor:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     name: Run the Supervisor
     needs: ["build", "init"]
     timeout-minutes: 60
@@ -222,7 +222,7 @@ jobs:
 
       - name: Build the Supervisor
         if: needs.init.outputs.publish != 'true'
-        uses: jethub-homeassistant/builder@2023.06.1
+        uses: jethub-homeassistant/builder@2023.06.1b
         with:
           args: |
             --test \
