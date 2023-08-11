@@ -209,7 +209,7 @@ jobs:
           channel: ${{ needs.init.outputs.channel }}
 
   run_supervisor:
-    runs-on: ${{ vars.RUNNER }}
+    runs-on: ubuntu-latest
     name: Run the Supervisor
     needs: ["build", "init"]
     timeout-minutes: 60
