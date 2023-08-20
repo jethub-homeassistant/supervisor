@@ -64,12 +64,16 @@ jobs:
       - name: Check if requirements files changed
         id: requirements
         run: |
-          echo "::set-output name=changed::true"
+          echo "changed=true" >> $GITHUB_OUTPUT
 
   build:
     name: Build ${{ matrix.arch }} supervisor
     needs: init
     runs-on: ${{ vars.RUNNER }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
     strategy:
       matrix:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
