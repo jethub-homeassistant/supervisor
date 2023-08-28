@@ -276,33 +276,41 @@ jobs:
           echo "Checking supervisor network info"
           test=$(docker exec hassio_cli ha network info --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            exit 2
           fi
 
       - name: Check the Store / Addon
         run: |
           echo "Install Core SSH Add-on"
-          test=$(docker exec hassio_cli ha addons install core_ssh --no-progress --raw-json | jq -r '.result')
+          testout=$(docker exec hassio_cli ha addons install core_ssh --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            echo $testout
+            exit 3
           fi
 
           # Make sure it actually installed
-          test=$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json | jq -r '.data.version')
+          testout=$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.data.version')
           if [[ "$test" == "null" ]]; then
-            exit 1
+            echo $testout
+            exit 4
           fi
 
           echo "Start Core SSH Add-on"
-          test=$(docker exec hassio_cli ha addons start core_ssh --no-progress --raw-json | jq -r '.result')
+          testout=$(docker exec hassio_cli ha addons start core_ssh --no-progress --raw-json | jq -r '.result')
+          test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            echo $testout
+            exit 5
           fi
 
           # Make sure its state is started
-          test="$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json | jq -r '.data.state')"
+          testout="$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json)"
+          test=$(echo ${testout} | jq -r '.data.state')
           if [ "$test" != "started" ]; then
-            exit 1
+            echo $testout
+            exit 6
           fi
 
       - name: Check the Supervisor code sign
@@ -311,25 +319,25 @@ jobs:
           echo "Enable Content-Trust"
           test=$(docker exec hassio_cli ha security options --content-trust=true --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            exit 7
           fi
 
           echo "Run supervisor health check"
           test=$(docker exec hassio_cli ha resolution healthcheck --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            exit 8
           fi
 
           echo "Check supervisor unhealthy"
           test=$(docker exec hassio_cli ha resolution info --no-progress --raw-json | jq -r '.data.unhealthy[]')
           if [ "$test" != "" ]; then
-            exit 1
+            exit 9
           fi
 
           echo "Check supervisor supported"
           test=$(docker exec hassio_cli ha resolution info --no-progress --raw-json | jq -r '.data.unsupported[]')
           if [[ "$test" =~ source_mods ]]; then
-            exit 1
+            exit 10
           fi
 
       - name: Create full backup
@@ -337,22 +345,25 @@ jobs:
         run: |
           test=$(docker exec hassio_cli ha backups new --no-progress --raw-json)
           if [ "$(echo $test | jq -r '.result')" != "ok" ]; then
-            exit 1
+            echo ${test}
+            exit 11
           fi
           echo "slug=$(echo $test | jq -r '.data.slug')" >> $GITHUB_OUTPUT
 
       - name: Uninstall SSH add-on
         run: |
-          test=$(docker exec hassio_cli ha addons uninstall core_ssh --no-progress --raw-json | jq -r '.result')
+          testout=$(docker exec hassio_cli ha addons uninstall core_ssh --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            echo ${testout}
+            exit 12
           fi
 
       - name: Restart supervisor
         run: |
           test=$(docker exec hassio_cli ha supervisor restart --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            exit 13
           fi
 
       - name: Wait for Supervisor to come up
@@ -366,29 +377,37 @@ jobs:
 
       - name: Restore SSH add-on from backup
         run: |
-          test=$(docker exec hassio_cli ha backups restore ${{ steps.backup.outputs.slug }} --addons core_ssh --no-progress --raw-json | jq -r '.result')
+          testout=$(docker exec hassio_cli ha backups restore ${{ steps.backup.outputs.slug }} --addons core_ssh --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 1
+            echo ${testout}
+            exit 14
           fi
 
           # Make sure it actually installed
-          test=$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json | jq -r '.data.version')
+          testout=$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.data.version')
           if [[ "$test" == "null" ]]; then
-            exit 1
+            echo ${testout}
+            exit 15
           fi
 
           # Make sure its state is started
-          test="$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json | jq -r '.data.state')"
+          testout="$(docker exec hassio_cli ha addons info core_ssh --no-progress --raw-json)"
+          test="$(echo ${testout} | jq -r '.data.state')"
           if [ "$test" != "started" ]; then
-            exit 1
+            echo ${testout}
+            exit 16
           fi
 
       - name: Restore SSL directory from backup
         run: |
-          test=$(docker exec hassio_cli ha backups restore ${{ steps.backup.outputs.slug }} --folders ssl --no-progress --raw-json | jq -r '.result')
-          if [ "$test" != "ok" ]; then
-            exit 1
-          fi
+          testout=$(docker exec hassio_cli ha backups restore ${{ steps.backup.outputs.slug }} --folders ssl --no-progress --raw-json)
+          test=$(echo ${testout} | jq -r '.result')
+            if [ "$test" != "ok" ]; then
+              echo ${testout}
+              exit 17
+            fi
 
       - name: Get supervisor logs on failiure
         if: ${{ cancelled() || failure() }}
