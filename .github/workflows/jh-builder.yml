@@ -298,7 +298,7 @@ jobs:
           fi
 
           echo "Start Core SSH Add-on"
-          testout=$(docker exec hassio_cli ha addons start core_ssh --no-progress --raw-json | jq -r '.result')
+          testout=$(docker exec hassio_cli ha addons start core_ssh --no-progress --raw-json)
           test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
             echo $testout
