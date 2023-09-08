@@ -1,16 +1,16 @@
 image: ghcr.io/jethub-homeassistant/{arch}-hassio-supervisor
 build_from:
-  aarch64: ghcr.io/jethub-homeassistant/aarch64-base-python:3.11-alpine3.16
-  armhf: ghcr.io/jethub-homeassistant/armhf-base-python:3.11-alpine3.16
-  armv7: ghcr.io/jethub-homeassistant/armv7-base-python:3.11-alpine3.16
-  amd64: ghcr.io/jethub-homeassistant/amd64-base-python:3.11-alpine3.16
-  i386: ghcr.io/jethub-homeassistant/i386-base-python:3.11-alpine3.16
+  aarch64: ghcr.io/jethub-homeassistant/aarch64-base-python:3.11-alpine3.18
+  armhf: ghcr.io/jethub-homeassistant/armhf-base-python:3.11-alpine3.18
+  armv7: ghcr.io/jethub-homeassistant/armv7-base-python:3.11-alpine3.18
+  amd64: ghcr.io/jethub-homeassistant/amd64-base-python:3.11-alpine3.18
+  i386: ghcr.io/jethub-homeassistant/i386-base-python:3.11-alpine3.18
 codenotary:
   signer: vb@jethome.ru
   base_image: vb@jethome.ru
 cosign:
-  base_identity: https://github.com/home-assistant/docker-base/.*
-  identity: https://github.com/home-assistant/supervisor/.*
+  base_identity: https://github.com/jethub-homeassistant/docker-base/.*
+  identity: https://github.com/jethub-homeassistant/supervisor/.*
 args:
   COSIGN_VERSION: 2.0.2
 labels:
@@ -18,7 +18,7 @@ labels:
   org.opencontainers.image.title: JH Home Assistant Supervisor
   org.opencontainers.image.description: Container-based system for managing Home Assistant Core installation
   org.opencontainers.image.source: https://github.com/jethub-homeassistant/supervisor
-  org.opencontainers.image.authors: The Home Assistant Authors
+  org.opencontainers.image.authors: The Home Assistant Authors (JetHome patched)
   org.opencontainers.image.url: https://www.home-assistant.io/
   org.opencontainers.image.documentation: https://www.home-assistant.io/docs/
   org.opencontainers.image.licenses: Apache License 2.0
