@@ -9,8 +9,8 @@ codenotary:
   signer: vb@jethome.ru
   base_image: vb@jethome.ru
 cosign:
-  base_identity: https://github.com/home-assistant/docker-base/.*
-  identity: https://github.com/home-assistant/supervisor/.*
+  base_identity: https://github.com/jethub-homeassistant/docker-base/.*
+  identity: https://github.com/jethub-homeassistant/supervisor/.*
 args:
   COSIGN_VERSION: 2.0.2
 labels:
