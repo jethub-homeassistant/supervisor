@@ -20,6 +20,15 @@ on:
         default: "false"
   release:
     types: ["published"]
+  push:
+    branches: ["main-jethub"]
+    paths:
+      - "rootfs/**"
+      - "supervisor/**"
+      - build.yaml
+      - Dockerfile
+      - requirements.txt
+      - setup.py
 
 env:
   DEFAULT_PYTHON: "3.11"
@@ -42,7 +51,7 @@ jobs:
       requirements: ${{ steps.requirements.outputs.changed }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -56,15 +65,10 @@ jobs:
         with:
           type: ${{ env.BUILD_TYPE }}
 
-      - name: Get changed files
-        id: changed_files
-        if: steps.version.outputs.publish == 'false'
-        uses: jitterbit/get-changed-files@v1
-
       - name: Check if requirements files changed
         id: requirements
         run: |
-          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.arch }} supervisor
@@ -79,7 +83,7 @@ jobs:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -93,13 +97,13 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2023.04.0
+        uses: jethub-homeassistant/wheels@2023.10.5
         with:
           abi: cp311
           tag: musllinux_1_2
           arch: ${{ matrix.arch }}
           wheels-key: ${{ secrets.WHEELS_KEY }}
-          apk: "libffi-dev;openssl-dev"
+          apk: "libffi-dev;openssl-dev;yaml-dev"
           skip-binary: aiohttp
           env-file: true
           requirements: "requirements.txt"
