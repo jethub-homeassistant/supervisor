@@ -42,7 +42,7 @@ jobs:
       requirements: ${{ steps.requirements.outputs.changed }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -79,7 +79,7 @@ jobs:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -93,13 +93,13 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2023.04.0
+        uses: jethub-homeassistant/wheels@2023.10.5
         with:
           abi: cp311
           tag: musllinux_1_2
           arch: ${{ matrix.arch }}
           wheels-key: ${{ secrets.WHEELS_KEY }}
-          apk: "libffi-dev;openssl-dev"
+          apk: "libffi-dev;openssl-dev;yaml-dev"
           skip-binary: aiohttp
           env-file: true
           requirements: "requirements.txt"

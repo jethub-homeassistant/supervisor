@@ -55,7 +55,7 @@ jobs:
       requirements: ${{ steps.requirements.outputs.changed }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -97,7 +97,7 @@ jobs:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
@@ -114,13 +114,13 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2023.04.0
+        uses: jethub-homeassistant/wheels@2023.10.5
         with:
           abi: cp311
           tag: musllinux_1_2
           arch: ${{ matrix.arch }}
           wheels-key: ${{ secrets.WHEELS_KEY }}
-          apk: "libffi-dev;openssl-dev"
+          apk: "libffi-dev;openssl-dev;yaml-dev"
           skip-binary: aiohttp
           env-file: true
           requirements: "requirements.txt"
@@ -133,7 +133,7 @@ jobs:
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
   
@@ -157,7 +157,7 @@ jobs:
   
       - name: Login to GitHub Container Registry
         if: needs.init.outputs.publish == 'true'
-        uses: docker/login-action@v2.2.0
+        uses: docker/login-action@v3.0.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -168,7 +168,7 @@ jobs:
         run: echo "BUILD_ARGS=--test" >> $GITHUB_ENV
 
       - name: Build supervisor
-        uses: jethub-homeassistant/builder@2023.08.0c
+        uses: jethub-homeassistant/builder@2023.09.0
         with:
           args: |
             $BUILD_ARGS \
@@ -186,7 +186,7 @@ jobs:
     steps:
       - name: Checkout the repository
         if: needs.init.outputs.publish == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: update build.yaml
         if: needs.init.outputs.publish == 'true'
@@ -215,14 +215,14 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: update build.yaml
         run: cp -f build-jethub.yaml build.yaml
 
       - name: Build the Supervisor
         if: needs.init.outputs.publish != 'true'
-        uses: jethub-homeassistant/builder@2023.08.0c
+        uses: jethub-homeassistant/builder@2023.09.0
         with:
           args: |
             --test \
@@ -276,7 +276,7 @@ jobs:
           echo "Checking supervisor network info"
           test=$(docker exec hassio_cli ha network info --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 2
+            exit 1
           fi
 
       - name: Check the Store / Addon
@@ -286,7 +286,7 @@ jobs:
           test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
             echo $testout
-            exit 3
+            exit 1
           fi
 
           # Make sure it actually installed
