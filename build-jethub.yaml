@@ -18,7 +18,7 @@ labels:
   org.opencontainers.image.title: JH Home Assistant Supervisor
   org.opencontainers.image.description: Container-based system for managing Home Assistant Core installation
   org.opencontainers.image.source: https://github.com/jethub-homeassistant/supervisor
-  org.opencontainers.image.authors: The Home Assistant Authors
+  org.opencontainers.image.authors: The Home Assistant Authors (JetHome patched)
   org.opencontainers.image.url: https://www.home-assistant.io/
   org.opencontainers.image.documentation: https://www.home-assistant.io/docs/
   org.opencontainers.image.licenses: Apache License 2.0
