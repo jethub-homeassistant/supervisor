@@ -114,7 +114,7 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2023.09.1
+        uses: jethub-homeassistant/wheels@2023.10.1
         with:
           abi: cp311
           tag: musllinux_1_2
@@ -133,7 +133,7 @@ jobs:
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
   
@@ -276,7 +276,7 @@ jobs:
           echo "Checking supervisor network info"
           test=$(docker exec hassio_cli ha network info --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            exit 2
+            exit 1
           fi
 
       - name: Check the Store / Addon
@@ -286,7 +286,7 @@ jobs:
           test=$(echo ${testout} | jq -r '.result')
           if [ "$test" != "ok" ]; then
             echo $testout
-            exit 3
+            exit 1
           fi
 
           # Make sure it actually installed
