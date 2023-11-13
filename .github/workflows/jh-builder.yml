@@ -139,7 +139,7 @@ jobs:
   
       - name: Install Cosign
         if: needs.init.outputs.publish == 'true'
-        uses: sigstore/cosign-installer@v3.1.2
+        uses: sigstore/cosign-installer@v3.2.0
         with:
           cosign-release: "v2.0.2"
   
@@ -282,10 +282,8 @@ jobs:
       - name: Check the Store / Addon
         run: |
           echo "Install Core SSH Add-on"
-          testout=$(docker exec hassio_cli ha addons install core_ssh --no-progress --raw-json)
-          test=$(echo ${testout} | jq -r '.result')
+          test=$(docker exec hassio_cli ha addons install core_ssh --no-progress --raw-json | jq -r '.result')
           if [ "$test" != "ok" ]; then
-            echo $testout
             exit 1
           fi
 
