@@ -143,6 +143,7 @@ RE_MACHINE = re.compile(
     r"|jethub-h2"
     r"|jethub-d1"
     r"|jethub-d1p"
+    r"|jethub-d2"
     r"|odroid-c2"
     r"|odroid-c4"
     r"|odroid-m1"
