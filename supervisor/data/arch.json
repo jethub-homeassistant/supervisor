@@ -13,6 +13,7 @@
   "jethub-h2": ["aarch64"],
   "jethub-d1": ["aarch64"],
   "jethub-d1p": ["aarch64"],
+  "jethub-d2": ["aarch64"],
   "odroid-c2": ["aarch64", "armv7", "armhf"],
   "odroid-c4": ["aarch64", "armv7", "armhf"],
   "odroid-m1": ["aarch64", "armv7", "armhf"],
