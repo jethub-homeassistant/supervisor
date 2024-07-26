@@ -23,6 +23,7 @@ on:
       - "rootfs/**"
       - "supervisor/**"
       - build.yaml
+      - build-jethub.yaml
       - Dockerfile
       - requirements.txt
       - setup.py
@@ -94,7 +95,7 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2024.01.0
+        uses: jethub-homeassistant/wheels@2024.07.1
         with:
           abi: cp312
           tag: musllinux_1_2
