@@ -17,7 +17,7 @@ jobs:
           cd rebase_supervisor
           git remote remove upstream || true
       - name: Checkout jethub supervisor repository (main)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           repository: jethubjhaos/supervisor
@@ -41,7 +41,7 @@ jobs:
           git remote remove upstream || true
 
       - name: Checkout jethub haos repository (main-jethub)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           repository: jethubjhaos/supervisor
