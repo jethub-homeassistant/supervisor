@@ -28,7 +28,7 @@ on:
       - "rootfs/**"
       - "supervisor/**"
       - build.yaml
-      - build-jhaos.yaml
+      - build-jethub.yaml
       - Dockerfile
       - requirements.txt
       - setup.py
@@ -114,7 +114,7 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2024.01.0
+        uses: jethub-homeassistant/wheels@2024.07.1
         with:
           abi: cp312
           tag: musllinux_1_2
@@ -133,15 +133,15 @@ jobs:
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v5.1.0
+        uses: actions/setup-python@v5.2.0
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
       - name: Install Cosign
         if: needs.init.outputs.publish == 'true'
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.6.0
         with:
-          cosign-release: "v2.2.3"
+          cosign-release: "v2.4.0"
 
       - name: Install dirhash and calc hash
         if: needs.init.outputs.publish == 'true'
@@ -157,7 +157,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: needs.init.outputs.publish == 'true'
-        uses: docker/login-action@v3.2.0
+        uses: docker/login-action@v3.3.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -168,7 +168,7 @@ jobs:
         run: echo "BUILD_ARGS=--test" >> $GITHUB_ENV
 
       - name: Build supervisor
-        uses: jethub-homeassistant/builder@2024.03.5
+        uses: jethub-homeassistant/builder@2024.08.2
         with:
           args: |
             $BUILD_ARGS \
@@ -222,7 +222,7 @@ jobs:
 
       - name: Build the Supervisor
         if: needs.init.outputs.publish != 'true'
-        uses: jethub-homeassistant/builder@2024.03.5
+        uses: jethub-homeassistant/builder@2024.08.2
         with:
           args: |
             --test \
