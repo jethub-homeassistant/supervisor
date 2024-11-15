@@ -114,7 +114,7 @@ jobs:
 
       - name: Build wheels
         if: needs.init.outputs.requirements == 'true'
-        uses: jethub-homeassistant/wheels@2024.07.1
+        uses: jethub-homeassistant/wheels@2024.11.0
         with:
           abi: cp312
           tag: musllinux_1_2
