@@ -35,7 +35,7 @@ on:
       - ".github/**"
 
 env:
-  DEFAULT_PYTHON: "3.12"
+  DEFAULT_PYTHON: "3.13"
   BUILD_NAME: supervisor
   BUILD_TYPE: supervisor
 
@@ -133,13 +133,13 @@ jobs:
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         if: needs.init.outputs.publish == 'true'
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5.4.0
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
       - name: Install Cosign
         if: needs.init.outputs.publish == 'true'
-        uses: sigstore/cosign-installer@v3.7.0
+        uses: sigstore/cosign-installer@v3.8.1
         with:
           cosign-release: "v2.4.0"
 
@@ -168,7 +168,7 @@ jobs:
         run: echo "BUILD_ARGS=--test" >> $GITHUB_ENV
 
       - name: Build supervisor
-        uses: jethub-homeassistant/builder@2024.08.2
+        uses: jethub-homeassistant/builder@2025.02.0
         with:
           args: |
             $BUILD_ARGS \
@@ -222,7 +222,7 @@ jobs:
 
       - name: Build the Supervisor
         if: needs.init.outputs.publish != 'true'
-        uses: jethub-homeassistant/builder@2024.08.2
+        uses: jethub-homeassistant/builder@2025.02.0
         with:
           args: |
             --test \
