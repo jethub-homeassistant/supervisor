@@ -29,7 +29,7 @@ def init_sentry(coresys: CoreSys) -> None:
     if not sentry_sdk.is_initialized():
         _LOGGER.info("Initializing Supervisor Sentry")
         sentry_sdk.init(
-            dsn="https://9c6ea70f49234442b4746e447b24747e@o427061.ingest.sentry.io/5370612",
+            dsn="https://47ea2fbffc454c6b877d1d41966873c7@o4505208810110976.ingest.sentry.io/4505208844386304",
             before_send=partial(filter_data, coresys),
             auto_enabling_integrations=False,
             default_integrations=False,
