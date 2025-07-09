@@ -46,7 +46,7 @@ concurrency:
 jobs:
   init:
     name: Initialize build
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     outputs:
       architectures: ${{ steps.info.outputs.architectures }}
       version: ${{ steps.version.outputs.version }}
@@ -182,7 +182,7 @@ jobs:
   version:
     name: Update version
     needs: ["init", "run_supervisor"]
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     steps:
       - name: Checkout the repository
         if: needs.init.outputs.publish == 'true'
