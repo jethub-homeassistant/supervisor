@@ -8,7 +8,7 @@ on:
 jobs:
   prepare:
     name: Prepare repository
-    runs-on: [self-hosted]
+    runs-on: ${{ vars.RUNNER }}
     if: ${{ github.repository_owner == 'jethubjhaos' }}
     steps:
       - name: Clean git
